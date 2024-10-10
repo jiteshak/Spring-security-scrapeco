@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TokenBlacklistService {
+
 	private final Set<String> blacklistedTokens = new HashSet<>();
 
 	public void blacklistToken(String token) {

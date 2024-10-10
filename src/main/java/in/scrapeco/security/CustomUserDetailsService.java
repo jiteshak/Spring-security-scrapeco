@@ -23,11 +23,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 				.orElseThrow(() -> new UsernameNotFoundException("User not found with email or username: " + email));
 
 		return org.springframework.security.core.userdetails.User.builder().username(user.getEmail())
-				.password(user.getPassword()).authorities("ROLE_USER").build();
+				.password(user.getPassword()).authorities("ROLE_USER", "ROLE_ADMIN").build();
 	}
-	
+
 	@Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
-    }
+	public UserDetailsService userDetailsService() {
+		return new CustomUserDetailsService();
+	}
 }

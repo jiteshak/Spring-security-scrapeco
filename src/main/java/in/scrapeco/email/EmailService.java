@@ -1,12 +1,14 @@
 package in.scrapeco.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import in.scrapeco.entity.User;
+import in.scrapeco.exception.APIException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -16,11 +18,11 @@ public class EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
 
-	@Async // Send email asynchronously
+	@Async
 	public void sendVerificationEmail(User user, String token) {
 		String subject = "Verify your email";
 		String confirmationUrl = "http://localhost:8090/api/auth/confirm?token=" + token;
-		String emailContent = buildEmail(user.getUsername(), confirmationUrl);
+		String emailContent = buildEmail(user.getFirstName(), confirmationUrl);
 
 		try {
 			MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -29,8 +31,12 @@ public class EmailService {
 			helper.setSubject(subject);
 			helper.setText(emailContent, true);
 			mailSender.send(mimeMessage);
-		} catch (MessagingException e) {
-			e.printStackTrace();
+		} catch (MailException ex) {
+			throw new APIException("Failed to send email. Please check the email address and try again.");
+		} catch (MessagingException ex) {
+			throw new APIException("Error while preparing the email. Please try again later.");
+		} catch (Exception ex) {
+			throw new APIException("An unexpected error occurred while sending the email.");
 		}
 	}
 

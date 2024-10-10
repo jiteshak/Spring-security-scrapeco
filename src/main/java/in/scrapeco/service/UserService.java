@@ -12,14 +12,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import in.scrapeco.email.EmailValidator;
 import in.scrapeco.entity.Role;
 import in.scrapeco.entity.User;
+import in.scrapeco.entity.UserTypeEntity;
 import in.scrapeco.entity.VerificationToken;
 import in.scrapeco.entity.dto.LoginRequest;
+import in.scrapeco.entity.dto.UserAddDto;
 import in.scrapeco.exception.APIException;
 import in.scrapeco.repository.RoleRepository;
 import in.scrapeco.repository.UserRepository;
+import in.scrapeco.repository.UserTypeEntityRepository;
 import in.scrapeco.repository.VerificationTokenRepository;
 import in.scrapeco.security.JwtTokenUtil;
 
@@ -44,7 +46,8 @@ public class UserService {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	private EmailValidator emailValidator;
+	@Autowired
+	private UserTypeEntityRepository userTypeEntityRepository;
 
 	public String login(LoginRequest loginRequest) {
 
@@ -59,20 +62,27 @@ public class UserService {
 		return jwtTokenUtil.generateToken(userDetails.getUsername());
 	}
 
-	public User registerUser(User user) {
+	public User registerUser(UserAddDto userAddDto) {
 
-		if (userRepository.existsByEmail(user.getEmail())) {
+		if (userRepository.existsByEmail(userAddDto.getEmail())) {
 			throw new APIException("Email already exists!");
 		}
 
-		boolean isValidEmail = emailValidator.isValidEmail(user.getEmail());
-		if (!isValidEmail) {
-			throw new IllegalStateException(String.format("Email %s is not valid", user.getEmail()));
-		}
-
+		User user = new User();
+		user.setEmail(userAddDto.getEmail());
+		user.setPhone(userAddDto.getPhone());
+		UserTypeEntity userTypeEntity = new UserTypeEntity();
+		userTypeEntity.setUserType(userAddDto.getUserTypeEntity().getUserType());
+		userTypeEntityRepository.save(userTypeEntity);
+		user.setUserTypeEntity(userTypeEntity);
+		user.setCompanyName(userAddDto.getCompanyName());
+		user.setFirstName(userAddDto.getFirstName());
+		user.setLastName(userAddDto.getLastName());
+		user.setCompanyType(userAddDto.getCompanyType());
+		user.setIndustryType(userAddDto.getIndustryType());
+		user.setPassword(new BCryptPasswordEncoder().encode(userAddDto.getPassword()));
 		Role role = roleRepository.findByName("ROLE_USER");
 		user.getRoles().add(role);
-		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		return userRepository.save(user);
 	}
 

@@ -1,7 +1,10 @@
 package in.scrapeco.entity;
 
+import in.scrapeco.entity.enums.UserType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,16 +17,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "roles_tb")
-public class Role {
+@Table(name = "user_type_tb")
+public class UserTypeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id") 
-    private Long roleId; 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "user_type_id")
+	private Long userTypeId;
 
-    @Column(nullable = false)
-    private String name;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_type")
+	private UserType userType;
 }
-
-

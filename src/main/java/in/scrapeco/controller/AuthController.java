@@ -18,6 +18,8 @@ import in.scrapeco.entity.User;
 import in.scrapeco.entity.VerificationToken;
 import in.scrapeco.entity.dto.JwtResponse;
 import in.scrapeco.entity.dto.LoginRequest;
+import in.scrapeco.entity.dto.UserAddDto;
+import in.scrapeco.repository.UserRepository;
 import in.scrapeco.service.TokenBlacklistService;
 import in.scrapeco.service.UserService;
 
@@ -35,13 +37,12 @@ public class AuthController {
 	private TokenBlacklistService tokenBlacklistService;
 
 	@PostMapping("/signup")
-	public ResponseEntity<String> registerUser(@RequestBody User user) {
-		User registeredUser = userService.registerUser(user);
+	public ResponseEntity<String> registerUser(@RequestBody UserAddDto userAddDto) {
 
+		User registeredUser = userService.registerUser(userAddDto);
 		String token = UUID.randomUUID().toString();
-		userService.createVerificationToken(registeredUser, token);
 		emailService.sendVerificationEmail(registeredUser, token);
-
+		userService.createVerificationToken(registeredUser, token);
 		return ResponseEntity.ok("Registration successful. Please check your email for verification.");
 	}
 
@@ -53,7 +54,6 @@ public class AuthController {
 		}
 		User user = verificationToken.getUser();
 		userService.enableUser(user);
-
 		return ResponseEntity.ok("Email verified successfully!");
 	}
 
@@ -67,13 +67,10 @@ public class AuthController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 			String token = authorizationHeader.substring(7);
-
-			if (tokenBlacklistService.isTokenBlacklisted(token)) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Please sign in again");
-			}
-
+			tokenBlacklistService.isTokenBlacklisted(token);
 			tokenBlacklistService.blacklistToken(token);
 			return ResponseEntity.ok("Successfully logged out");
 		} else {
