@@ -50,11 +50,10 @@ public class EmailService {
 				+ "    <tbody><tr>\n" + "      <td height=\"30\"><br></td>\n" + "    </tr>\n" + "    <tr>\n"
 				+ "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.6;color:#333333\">\n"
 				+ "        <p style=\"margin:0\">Hi " + name + ",</p>\n"
-				+ "        <p style=\"margin:16px 0\">Thank you for registering. Please click on the link below to activate your account:</p>\n"
-				+ "        <blockquote style=\"border-left:10px solid #b1b4b6;padding:15px 15px;font-size:19px;color:#0044cc\">\n"
-				+ "          <p style=\"margin:0\"><a href=\"" + link
-				+ "\" style=\"color:#0044cc;text-decoration:none;font-weight:bold\">Activate Now</a></p>\n"
-				+ "        </blockquote>\n"
+				+ "        <p style=\"margin:16px 0\">Thank you for registering. Please click on the button below to verify your account:</p>\n"
+				+ "        <p style=\"text-align:center\">\n" + "          <a href=\"" + link
+				+ "\" style=\"background-color:#0044cc;color:#ffffff;padding:10px 20px;text-decoration:none;font-weight:bold;font-size:18px;border-radius:5px;display:inline-block\">Verify</a>\n"
+				+ "        </p>\n"
 				+ "        <p style=\"margin:16px 0\">This link will expire in 15 minutes. We look forward to having you onboard!</p>\n"
 				+ "        <p style=\"margin:24px 0\">Thanks and Regards,<br>Scrapeco Team</p>\n" + "      </td>\n"
 				+ "    </tr>\n" + "    <tr>\n" + "      <td height=\"30\"><br></td>\n" + "    </tr>\n"
